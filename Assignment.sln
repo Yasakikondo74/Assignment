@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36127.28 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library", "Library\Library.csproj", "{B27A3D0B-60C1-4CB6-A83C-CF6A922BFE17}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwaggerAPI", "SwaggerAPI\SwaggerAPI.csproj", "{89D2C8E6-B32A-4C0F-B46B-9A8F39A273A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebView", "WebView\WebView.csproj", "{B5C41A1E-8933-4E7D-818F-C7A4930BF3CB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B27A3D0B-60C1-4CB6-A83C-CF6A922BFE17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B27A3D0B-60C1-4CB6-A83C-CF6A922BFE17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B27A3D0B-60C1-4CB6-A83C-CF6A922BFE17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B27A3D0B-60C1-4CB6-A83C-CF6A922BFE17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89D2C8E6-B32A-4C0F-B46B-9A8F39A273A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89D2C8E6-B32A-4C0F-B46B-9A8F39A273A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89D2C8E6-B32A-4C0F-B46B-9A8F39A273A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89D2C8E6-B32A-4C0F-B46B-9A8F39A273A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5C41A1E-8933-4E7D-818F-C7A4930BF3CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5C41A1E-8933-4E7D-818F-C7A4930BF3CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5C41A1E-8933-4E7D-818F-C7A4930BF3CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5C41A1E-8933-4E7D-818F-C7A4930BF3CB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {260EB622-15DE-4158-BA23-A021DA7DF42B}
+	EndGlobalSection
+EndGlobal
