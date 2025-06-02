@@ -1,6 +1,7 @@
 using Library.Interface;
 using Library.Interface.Repository;
 using Library.Model;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 namespace WebView
@@ -11,10 +12,22 @@ namespace WebView
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
             builder.Services.AddControllersWithViews();
+            //Database connection
             builder.Services.AddDbContext<DatabaseContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            //Account Authentication
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/Account/Login"; 
+                    options.AccessDeniedPath = "/Account/AccessDenied";
+                    options.ExpireTimeSpan = TimeSpan.FromMinutes(30); 
+                    options.SlidingExpiration = true;
+                });
+
+            //sub database
             builder.Services.AddScoped<IAccount, AccountRepos>();
             builder.Services.AddScoped<IFood, FoodRepos>();
             builder.Services.AddScoped<IOrder, OrderRepos>();
@@ -34,6 +47,7 @@ namespace WebView
             app.UseRouting();
 
             app.UseAuthorization();
+            app.UseAuthentication();
 
             app.MapControllerRoute(
                 name: "default",

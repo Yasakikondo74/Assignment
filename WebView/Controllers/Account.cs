@@ -5,38 +5,33 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebView.Controllers
 {
-    public class FoodController : Controller
+    [Route("AccountController")]
+    public class Account : Controller
     {
-        private readonly IFood _foodrepos;
+        private readonly IAccount _accountRepository;
 
-        public FoodController(IFood foodrepos)
+        public Account(IAccount accountRepository)
         {
-            _foodrepos = foodrepos;
+            _accountRepository = accountRepository;
         }
         [HttpGet]
         public async Task<IActionResult> List()
         {
-            return View(await _foodrepos.GetList());
+            var accounts = await _accountRepository.GetList();
+            return View(accounts);
         }
-        [HttpGet]
-        public async Task<IActionResult> CustomerList()
-        {
-            var foods = await _foodrepos.GetList();
-            return View(foods);
-        }
-        [HttpGet]
         public async Task<IActionResult> Find(Guid? ID, string name)
         {
             if (ID.HasValue)
             {
-                var result = await _foodrepos.Find(ID.Value, null);
+                var result = await _accountRepository.Find(ID.Value, null);
                 if (result == null)
                     return NotFound($"Account with ID {ID} not found.");
                 return View(result);
             }
             else if (!string.IsNullOrWhiteSpace(name))
             {
-                var result = await _foodrepos.Find(Guid.Empty, name);
+                var result = await _accountRepository.Find(Guid.Empty, name);
                 if (result == null)
                     return NotFound($"Account with name {name} not found.");
                 return View(result);
@@ -48,32 +43,32 @@ namespace WebView.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Create(Food food)
+        public async Task<IActionResult> Create(Library.Model.Account account)
         {
-            await _foodrepos.Create(food);
+            await _accountRepository.Create(account);
             return RedirectToAction("List");
         }
-        [HttpGet]
+        [HttpGet("{ID}")]
         public async Task<IActionResult> Update(Guid ID)
         {
-            var food = await _foodrepos.Find(ID, null);
-            if (food == null)
-                return NotFound($"Food with ID {ID} not found.");
-            return View(food);
+            var account = await _accountRepository.Find(ID, null);
+            if (account == null)
+                return NotFound($"Account with ID {ID} not found.");
+            return View(account);
         }
         [HttpPost]
-        public async Task<IActionResult> Update(Food food, Guid ID)
+        public async Task<IActionResult> Update(Library.Model.Account account, Guid ID)
         {
-            if (await _foodrepos.Update(food, ID))
+            if (await _accountRepository.Update(account, ID))
             {
                 return RedirectToAction("List");
             }
-            return NotFound($"Food with ID {ID} not found.");
+            return NotFound($"Account with ID {ID} not found.");
         }
-        [HttpGet]
+        [HttpGet("{ID}")]
         public async Task<IActionResult> Delete(Guid ID)
         {
-            var account = await _foodrepos.Find(ID, null);
+            var account = await _accountRepository.Find(ID, null);
             if (account == null)
                 return NotFound($"Account with ID {ID} not found.");
             return View(account);
@@ -81,7 +76,7 @@ namespace WebView.Controllers
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(Guid ID)
         {
-            if (await _foodrepos.Delete(ID))
+            if (await _accountRepository.Delete(ID))
             {
                 return RedirectToAction("List");
             }

@@ -1,4 +1,5 @@
 ﻿using Library.Model;
+using BCrypt.Net;
 using Microsoft.EntityFrameworkCore;
 
 namespace Library.Interface.Repository
@@ -9,6 +10,16 @@ namespace Library.Interface.Repository
         public AccountRepos(DatabaseContext context)
         {
             _context = context;
+        }
+        public async Task<Account?> Find_v2(string username, string password)
+        {
+            var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Username == username);
+
+            if (account != null && BCrypt.Net.BCrypt.Verify(password, account.Password))
+            {
+                return account;
+            }
+            return null;
         }
         public async Task<Account> Find(Guid ID, string name)
         {

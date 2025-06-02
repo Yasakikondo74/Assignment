@@ -5,11 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebView.Controllers
 {
-    public class OrderController : Controller
+    [Route("OrderController")]
+    public class Order : Controller
     {
         private readonly IOrder _orderRepos;
 
-        public OrderController(IOrder orderRepos)
+        public Order(IOrder orderRepos)
         {
             _orderRepos = orderRepos;
         }
@@ -35,7 +36,7 @@ namespace WebView.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Create(Order order)
+        public async Task<IActionResult> Create(Library.Model.Order order)
         {
             await _orderRepos.Create(order);
             return RedirectToAction("List");
@@ -49,7 +50,7 @@ namespace WebView.Controllers
             return View(food);
         }
         [HttpPost]
-        public async Task<IActionResult> Update(Order order, Guid ID)
+        public async Task<IActionResult> Update(Library.Model.Order order, Guid ID)
         {
             if (await _orderRepos.Update(order, ID))
             {

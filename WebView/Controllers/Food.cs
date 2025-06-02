@@ -2,35 +2,44 @@
 using Library.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 
 namespace WebView.Controllers
 {
-    public class AccountController : Controller
+    [Route("FoodController")]
+    public class Food : Controller
     {
-        private readonly IAccount _accountRepository;
+        private readonly IFood _foodrepos;
 
-        public AccountController(IAccount accountRepository)
+        public Food(IFood foodrepos)
         {
-            _accountRepository = accountRepository;
+            _foodrepos = foodrepos;
+        }
+        [HttpGet("FoodList")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> FoodList()
+        {
+            return View(await _foodrepos.GetList());
+        }
+        [HttpGet("CustomerList")]
+        public async Task<IActionResult> CustomerList()
+        {
+            var foods = await _foodrepos.GetList();
+            return View(foods);
         }
         [HttpGet]
-        public async Task<IActionResult> List()
-        {
-            var accounts = await _accountRepository.GetList();
-            return View(accounts);
-        }
         public async Task<IActionResult> Find(Guid? ID, string name)
         {
             if (ID.HasValue)
             {
-                var result = await _accountRepository.Find(ID.Value, null);
+                var result = await _foodrepos.Find(ID.Value, null);
                 if (result == null)
                     return NotFound($"Account with ID {ID} not found.");
                 return View(result);
             }
             else if (!string.IsNullOrWhiteSpace(name))
             {
-                var result = await _accountRepository.Find(Guid.Empty, name);
+                var result = await _foodrepos.Find(Guid.Empty, name);
                 if (result == null)
                     return NotFound($"Account with name {name} not found.");
                 return View(result);
@@ -42,32 +51,32 @@ namespace WebView.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Create(Account account)
+        public async Task<IActionResult> Create(Library.Model.Food food)
         {
-            await _accountRepository.Create(account);
+            await _foodrepos.Create(food);
             return RedirectToAction("List");
         }
-        [HttpGet("{ID}")]
+        [HttpGet]
         public async Task<IActionResult> Update(Guid ID)
         {
-            var account = await _accountRepository.Find(ID, null);
-            if (account == null)
-                return NotFound($"Account with ID {ID} not found.");
-            return View(account);
+            var food = await _foodrepos.Find(ID, null);
+            if (food == null)
+                return NotFound($"Food with ID {ID} not found.");
+            return View(food);
         }
         [HttpPost]
-        public async Task<IActionResult> Update(Account account, Guid ID)
+        public async Task<IActionResult> Update(Library.Model.Food food, Guid ID)
         {
-            if (await _accountRepository.Update(account, ID))
+            if (await _foodrepos.Update(food, ID))
             {
                 return RedirectToAction("List");
             }
-            return NotFound($"Account with ID {ID} not found.");
+            return NotFound($"Food with ID {ID} not found.");
         }
-        [HttpGet("{ID}")]
+        [HttpGet]
         public async Task<IActionResult> Delete(Guid ID)
         {
-            var account = await _accountRepository.Find(ID, null);
+            var account = await _foodrepos.Find(ID, null);
             if (account == null)
                 return NotFound($"Account with ID {ID} not found.");
             return View(account);
@@ -75,7 +84,7 @@ namespace WebView.Controllers
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(Guid ID)
         {
-            if (await _accountRepository.Delete(ID))
+            if (await _foodrepos.Delete(ID))
             {
                 return RedirectToAction("List");
             }
