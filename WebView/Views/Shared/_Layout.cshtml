@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -95,7 +96,15 @@
                     Account: @(User.Identity?.IsAuthenticated == true ? User.Identity.Name : "Guest")
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
-                    <li><button class="dropdown-item" type="button">Profile</button></li>
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <li>
+                            <a class="dropdown-item"
+                               asp-controller="Account"
+                               asp-action="Details"
+                               asp-route-id="@User.FindFirst(ClaimTypes.NameIdentifier)?.Value">Profile</a>
+                        </li>
+                    }
                     <li><button class="dropdown-item" type="button" id="darkModeToggle">Dark Mode</button></li>
 
                     @if (User.IsInRole("Customer"))

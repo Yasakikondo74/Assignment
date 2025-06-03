@@ -78,6 +78,22 @@ namespace WebView.Controllers
             var accounts = await _accountRepository.GetList();
             return View(accounts);
         }
+        [HttpGet("Details/{id}")]
+        public async Task<IActionResult> Details(Guid id)
+        {
+            if (id == Guid.Empty) 
+            {
+                return BadRequest("Account ID cannot be empty.");
+            }
+            var account = await _accountRepository.Find(id, ""); 
+
+            if (account == null)
+            {
+                return NotFound();
+            }
+
+            return View(account);
+        }
         public async Task<IActionResult> Find(Guid? ID, string name)
         {
             if (ID.HasValue)
