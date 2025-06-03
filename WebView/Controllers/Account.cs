@@ -1,7 +1,11 @@
 ﻿using Library.Interface;
 using Library.Model;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
+using System.Security.Claims;
 
 namespace WebView.Controllers
 {
@@ -14,7 +18,61 @@ namespace WebView.Controllers
         {
             _accountRepository = accountRepository;
         }
+        [AllowAnonymous]
         [HttpGet]
+        [Route("Login")]
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("Login")]
+        public async Task<IActionResult> Login(string username, string password)
+        {
+            var user = await _accountRepository.Login(username, password);
+            if (user != null)
+            {
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.Username),
+                    new Claim(ClaimTypes.NameIdentifier, user.ID.ToString()),
+                    new Claim(ClaimTypes.Role, user.Role)
+                };
+
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var authProperties = new AuthenticationProperties
+                {
+                    IsPersistent = true,
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30)
+                };
+
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity), authProperties);
+                if (user.Role == "Admin")
+                {
+                    Console.WriteLine($"Logged in user role: {user.Role}");
+                    return RedirectToAction("List");
+                }
+                else
+                {
+                    Console.WriteLine($"Logged in user role: {user.Role}");
+                    return RedirectToAction("CustomerList", "FoodController");
+                }
+            }
+
+            ViewBag.Error = "Invalid username or password.";
+            return View();
+        }
+        [HttpPost, Route("Logout"), AllowAnonymous]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Login");
+        }
+
+        [HttpGet("List"), Authorize(Roles = "Admin")]
         public async Task<IActionResult> List()
         {
             var accounts = await _accountRepository.GetList();
@@ -38,18 +96,48 @@ namespace WebView.Controllers
             }
             return BadRequest("Please provide either an ID or name.");
         }
-        public async Task<IActionResult> Create()
+
+        [HttpGet]
+        [Authorize(Roles = "admin")]
+        [Route("RegisterAdmin")]
+        public IActionResult RegisterAdmin()
         {
             return View();
         }
-        [HttpPost]
-        public async Task<IActionResult> Create(Library.Model.Account account)
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("RegisterCustomer")]
+        public IActionResult RegisterCustomer()
         {
-            await _accountRepository.Create(account);
-            return RedirectToAction("List");
+            return View();
         }
-        [HttpGet("{ID}")]
-        public async Task<IActionResult> Update(Guid ID)
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [Route("RegisterAdmin")]
+        public async Task<IActionResult> RegisterAdmin(Library.Model.Account account)
+        {
+            if (!ModelState.IsValid)
+                return View(account);
+
+            await _accountRepository.Create(account);
+            return RedirectToAction("Index", "Home");
+        }
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("RegisterCustomer")]
+        public async Task<IActionResult> RegisterCustomer(Library.Model.Account account)
+        {
+            if (!ModelState.IsValid)
+                return View(account);
+
+            await _accountRepository.Create(account);
+            return RedirectToAction("Index", "Home");
+        }
+
+
+        [HttpGet("Edit/{ID}")]
+        public async Task<IActionResult> Edit(Guid ID)
         {
             var account = await _accountRepository.Find(ID, null);
             if (account == null)
@@ -57,7 +145,7 @@ namespace WebView.Controllers
             return View(account);
         }
         [HttpPost]
-        public async Task<IActionResult> Update(Library.Model.Account account, Guid ID)
+        public async Task<IActionResult> Edit(Library.Model.Account account, Guid ID)
         {
             if (await _accountRepository.Update(account, ID))
             {
@@ -65,7 +153,7 @@ namespace WebView.Controllers
             }
             return NotFound($"Account with ID {ID} not found.");
         }
-        [HttpGet("{ID}")]
+        [HttpGet("Delete/{ID}")]
         public async Task<IActionResult> Delete(Guid ID)
         {
             var account = await _accountRepository.Find(ID, null);
@@ -73,7 +161,7 @@ namespace WebView.Controllers
                 return NotFound($"Account with ID {ID} not found.");
             return View(account);
         }
-        [HttpPost, ActionName("Delete")]
+        [HttpPost("Delete/{ID}"), ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(Guid ID)
         {
             if (await _accountRepository.Delete(ID))

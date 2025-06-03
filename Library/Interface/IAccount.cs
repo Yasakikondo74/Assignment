@@ -10,7 +10,6 @@ namespace Library.Interface
         Task<bool> Update(Account account, Guid ID);
         Task<bool> Delete(Guid ID);
         //login
-        Task<Account?> Find_v2(string username, string password);
-
+        Task<Account?> Login(string username, string password);
     }
 }

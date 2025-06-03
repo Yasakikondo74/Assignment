@@ -1,8 +1,9 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Login";
 }
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<img style="width: 100%;" src="https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fwww.bitrebels.com%2Fwp-content%2Fuploads%2F2012%2F01%2FAdvertised-And-Real-Burgers-Compared-7.jpg&f=1&nofb=1&ipt=18086fa542b6997c6f8033c090ae7562c313dedbbeb9996f6217ae3602488a4d">
+<img style="width: 100%;" src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.a1Qhw3EK7PsxEnP1WjwkaQHaDS%26pid%3DApi&f=1&ipt=a73e7c9e80be5848d0a6e6f7beb5c717a45c69aa80901056ed7f07b2b4a0f6821">
+@if (ViewBag.Error != null)
+{
+    <p style="color:red;">@ViewBag.Error</p>
+}

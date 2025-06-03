@@ -15,7 +15,7 @@ namespace Library.Model
         public DbSet<Order> Orders { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS01;Database=FoodDB;Trusted_Connection=True;TrustServerCertificate=True")
+            optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=FoodDB;Trusted_Connection=True;TrustServerCertificate=True")
                 .EnableSensitiveDataLogging();
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)

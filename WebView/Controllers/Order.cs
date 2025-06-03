@@ -1,6 +1,4 @@
 ﻿using Library.Interface;
-using Library.Model;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebView.Controllers
@@ -14,6 +12,7 @@ namespace WebView.Controllers
         {
             _orderRepos = orderRepos;
         }
+
         [HttpGet]
         public async Task<IActionResult> List()
         {

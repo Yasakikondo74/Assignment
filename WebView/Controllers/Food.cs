@@ -15,12 +15,13 @@ namespace WebView.Controllers
         {
             _foodrepos = foodrepos;
         }
-        [HttpGet("FoodList")]
+        [HttpGet("List")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> FoodList()
+        public async Task<IActionResult> List()
         {
             return View(await _foodrepos.GetList());
         }
+        [AllowAnonymous]
         [HttpGet("CustomerList")]
         public async Task<IActionResult> CustomerList()
         {
@@ -46,6 +47,8 @@ namespace WebView.Controllers
             }
             return BadRequest("Please provide either an ID or name.");
         }
+        [HttpGet("Create")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create()
         {
             return View();
@@ -56,8 +59,10 @@ namespace WebView.Controllers
             await _foodrepos.Create(food);
             return RedirectToAction("List");
         }
+        [HttpGet("Update")]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
-        public async Task<IActionResult> Update(Guid ID)
+        public async Task<IActionResult> Edit(Guid ID)
         {
             var food = await _foodrepos.Find(ID, null);
             if (food == null)
@@ -65,7 +70,7 @@ namespace WebView.Controllers
             return View(food);
         }
         [HttpPost]
-        public async Task<IActionResult> Update(Library.Model.Food food, Guid ID)
+        public async Task<IActionResult> Edit(Library.Model.Food food, Guid ID)
         {
             if (await _foodrepos.Update(food, ID))
             {
@@ -73,7 +78,8 @@ namespace WebView.Controllers
             }
             return NotFound($"Food with ID {ID} not found.");
         }
-        [HttpGet]
+        [HttpGet("Delete")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Guid ID)
         {
             var account = await _foodrepos.Find(ID, null);

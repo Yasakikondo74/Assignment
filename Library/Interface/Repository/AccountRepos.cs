@@ -11,14 +11,17 @@ namespace Library.Interface.Repository
         {
             _context = context;
         }
-        public async Task<Account?> Find_v2(string username, string password)
+        public async Task<Account?> Login(string username, string password)
         {
-            var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Username == username);
+            var user = await _context.Accounts
+                .FirstOrDefaultAsync(a => a.Username == username);
 
-            if (account != null && BCrypt.Net.BCrypt.Verify(password, account.Password))
+            // Since passwords are stored as plain text, compare directly
+            if (user != null && user.Password == password)
             {
-                return account;
+                return user;
             }
+
             return null;
         }
         public async Task<Account> Find(Guid ID, string name)
@@ -40,6 +43,7 @@ namespace Library.Interface.Repository
         }
         public async Task Create(Account account)
         {
+            account.Password = BCrypt.Net.BCrypt.HashPassword(account.Password);
             await _context.Accounts.AddAsync(account);
             await _context.SaveChangesAsync();
         }
@@ -49,7 +53,10 @@ namespace Library.Interface.Repository
             if (ToUpdate == null) return false;
 
             ToUpdate.Username = account.Username;
-            ToUpdate.Password = account.Password;
+            if (!BCrypt.Net.BCrypt.Verify(account.Password, ToUpdate.Password))
+            {
+                ToUpdate.Password = BCrypt.Net.BCrypt.HashPassword(account.Password);
+            }
             ToUpdate.PhoneNumber = account.PhoneNumber;
             ToUpdate.Email = account.Email;
             ToUpdate.FullName = account.FullName;

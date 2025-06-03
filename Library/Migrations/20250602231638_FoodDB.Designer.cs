@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Library.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20250602081956_FoodDB")]
+    [Migration("20250602231638_FoodDB")]
     partial class FoodDB
     {
         /// <inheritdoc />
